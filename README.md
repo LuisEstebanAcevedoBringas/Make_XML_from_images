@@ -8,7 +8,7 @@
     <hands> num_hands </hands>
     <path> path/filename.jpg </path>
     <source>
-        <database> database_name </database>
+        <database> IPN_Hand </database>
         <keyword> keyword </keyword>
         <date> date </date>
     </source>
