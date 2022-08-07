@@ -1,7 +1,7 @@
 ## Generate XML files with the annotations of segmented images from de IPN Hand dataset.
 
 XML Structure:
-
+```
 <annotation>
     <folder> folder_name </folder>
     <filename> filename.jpg </filename>
@@ -31,3 +31,4 @@ XML Structure:
         <size> size </size>
     </object>
 </annotation>
+```
