@@ -3,7 +3,7 @@
 ### XML Structure:
 ```
 <annotation>
-    <folder> folder_name </folder>
+    <folder> segment </folder>
     <filename> filename.jpg </filename>
     <hands> num_hands </hands>
     <path> path/filename.jpg </path>
