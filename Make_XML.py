@@ -59,7 +59,7 @@ def generate_XML(img_path, img_name, img_width, img_height, num_hands, obj_names
         add_label.text = obj_labels[i]
         add_bndbox = ET.SubElement(add_object,"bndbox")
 
-        #Get the properties  "xmin", "ymin", "xmax", "ymax"
+        #Get the properties "xmin", "ymin", "xmax", "ymax"
         xmin = bounding_boxes[i][0]
         ymin = bounding_boxes[i][1]
         xmax = bounding_boxes[i][2]
