@@ -12,6 +12,7 @@ def get_image_data(path):
     img_name = os.path.basename(path) #Get the name with extention of the image.
     num_hands = 2 #Total of hands in the image.
 
+    #generate_XML(img_path, img_name, img_width, img_height, num_hands)
     return img_path, img_name ,img_width, img_height, num_hands
 
 def generate_XML(img_path, img_name, img_width, img_height, num_hands, obj_names, obj_labels, bounding_boxes):
