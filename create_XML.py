@@ -7,10 +7,16 @@ import os
 
 def get_image_data(path):
     img_path = path #Get the path of the image.
-    img = Image.open(path)
-    img_width, img_height = img.size #Get width & height of the image.
+    img = cv2.imread(path)
+    img_height = img.shape[0] #Get height
+    img_width = img.shape[1] #Get width
     img_name = os.path.basename(path) #Get the name with extention of the image.
     num_hands = 2 #Total of hands in the image.
+
+    cv2.imshow("Image", img)
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
     #generate_XML(img_path, img_name, img_width, img_height, num_hands)
     return img_path, img_name ,img_width, img_height, num_hands
