@@ -59,8 +59,13 @@ def get_image_data(path):
     except:
         print("No right hand")
 
+    #cv2.imshow(img_name, img)
+    #cv2.imshow("Gray", grayscale)
+
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
+
     generate_XML(img_path, img_name, img_width, img_height, obj_names, obj_labels, bboxes)
-    #return img_path, img_name ,img_width, img_height
 
 def generate_XML(img_path, img_name, img_width, img_height, obj_names, obj_labels, bounding_boxes):
     '''
