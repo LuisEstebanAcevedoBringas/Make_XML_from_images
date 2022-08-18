@@ -5,7 +5,6 @@
 <annotation>
     <folder> segment </folder>
     <filename> filename.jpg </filename>
-    <hands> num_hands </hands>
     <path> path/filename.jpg </path>
     <source>
         <database> IPN_Hand </database>
