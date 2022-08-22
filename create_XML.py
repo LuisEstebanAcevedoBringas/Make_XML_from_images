@@ -1,3 +1,4 @@
+#Generate the xml files from images with the clases "left" and "right".
 import xml.etree.ElementTree as ET
 from glob import glob
 import cv2
@@ -11,27 +12,17 @@ def get_image_data(path):
     img_width = img.shape[1] #Get width.
     img_name = os.path.basename(path) #Get the name with extention of the image.
 
-    #Colors
-    black = 0
-    light_gray = 172
-    gray = 105
-    white = 255
+    colors = [0, 255, 172, 105] #{black, white, light_gray, gray}
 
-    obj_labels = []
-    obj_names = []
-    bboxes = []
-    x_left = []
-    y_left = []
-    x_right = []
-    y_right = []
+    obj_labels, obj_names, bboxes, x_left, y_left, x_right, y_right = ([] for i in range(7)) #Declare all the lists.
 
     for y in range(grayscale.shape[0]):  # Columns
         for x in range(grayscale.shape[1]):  # Rows
             r = grayscale[y, x]
-            if(r) == gray:
+            if(r) == colors[3]: #Look for the gray color.
                 x_right.append(x)
                 y_right.append(y)
-            elif(r) == light_gray:
+            elif(r) == colors[2]: #Look for the light gray color.
                 x_left.append(x)
                 y_left.append(y)
 
@@ -59,9 +50,7 @@ def get_image_data(path):
     except:
         print("No right hand")
 
-    #cv2.imshow(img_name, img)
-    #cv2.imshow("Gray", grayscale)
-
+    #cv2.imshow(img_name, img) #Show img with the bounding boxes
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
 
@@ -88,6 +77,8 @@ def generate_XML(img_path, img_name, img_width, img_height, obj_names, obj_label
     add_filename.text = os.path.basename(img_name)
     add_path = ET.SubElement(annotation, "path")
     add_path.text = img_path
+    add_numHands = ET.SubElement(annotation,"hands")
+    add_numHands.text = str(len(obj_names))
 
     #Source section
     add_source = ET.SubElement(annotation,"source")
