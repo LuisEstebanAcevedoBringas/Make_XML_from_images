@@ -1,6 +1,7 @@
 #Generate the xml files from images with the clases "left" and "right".
 import xml.etree.ElementTree as ET
 from glob import glob
+import pandas as pd
 import cv2
 import os
 
@@ -55,7 +56,9 @@ def get_image_data(path):
     #cv2.destroyAllWindows()
 
     generate_XML(img_path, img_name, img_width, img_height, obj_names, obj_labels, bboxes)
+    generate_XML_gestures()
 
+#Generate the xml files with the clases left and right
 def generate_XML(img_path, img_name, img_width, img_height, obj_names, obj_labels, bounding_boxes):
     '''
     Params:
@@ -124,7 +127,83 @@ def generate_XML(img_path, img_name, img_width, img_height, obj_names, obj_label
     new_file = open(save_path, "w")
     new_file.write(file_content) 
 
+def generate_XML_gestures(img_path, img_name, img_width, img_height, obj_gestures_names, obj_gestures_labels, bounding_boxes):
+    '''
+    Params:
+    img_path -> (str)
+    img_name -> (str)
+    img_width -> (int)
+    img_height -> (int)
+    num_hands -> (int) of the number of hands in the images. 
+    obj_names -> List of the object names (left or right)
+    obj_labels -> List of the object labels (1 for left - 2 for right)
+    bounding_boxes -> List of arrays with the bounding boxes of the image.
+    '''
+    file_name = img_name.split('.')[0]
+    save_path = "./test/annotation_gesture/" + file_name + ".xml"
+    annotation = ET.Element("annotation")
+    add_folder = ET.SubElement(annotation,"folder")
+    add_folder.text = "segment"
+    add_filename = ET.SubElement(annotation,"filename")
+    add_filename.text = os.path.basename(img_name)
+    add_path = ET.SubElement(annotation, "path")
+    add_path.text = img_path
+    add_numHands = ET.SubElement(annotation,"hands")
+    add_numHands.text = str(len(obj_gestures_names))
+
+    #Source section
+    add_source = ET.SubElement(annotation,"source")
+    add_database = ET.SubElement(add_source, "database")
+    add_database.text = "IPN Hand"
+
+    #Size section 
+    add_size = ET.SubElement(annotation,"size")
+    add_width = ET.SubElement(add_size,"width")
+    add_width.text = str(img_width)
+    add_height = ET.SubElement(add_size,"height")
+    add_height.text = str(img_height)
+    add_dimension = ET.SubElement(add_size,"depth")
+    add_dimension.text = "3"
+
+    #Object section
+    for i in range(len(obj_gestures_names)):
+        add_object = ET.SubElement(annotation,"object")
+        add_mame = ET.SubElement(add_object, "name")
+        add_mame.text = obj_gestures_names[i]
+        add_label = ET.SubElement(add_object,"label")
+        add_label.text = str(obj_gestures_labels[i])
+        add_bndbox = ET.SubElement(add_object,"bndbox")
+
+        #Get the properties "xmin", "ymin", "xmax", "ymax"
+        xmin = str(bounding_boxes[i][0])
+        ymin = str(bounding_boxes[i][1])
+        xmax = str(bounding_boxes[i][2])
+        ymax = str(bounding_boxes[i][3])
+        add_xmin = ET.SubElement(add_bndbox,"xmin")
+        add_xmin.text = str(xmin)
+        add_ymin = ET.SubElement(add_bndbox,"ymin")
+        add_ymin.text = str(ymin)
+        add_xmax = ET.SubElement(add_bndbox,"xmax")
+        add_xmax.text = str(xmax)
+        add_ymax = ET.SubElement(add_bndbox,"ymax")
+        add_ymax.text = str(ymax)
+
+        if i >= len(obj_gestures_names) - 1:
+            break
+
+    file_content = ET.tostring(annotation, encoding='unicode')
+    new_file = open(save_path, "w")
+    new_file.write(file_content) 
+
+def get_info_from_xlsx(excel_path):
+    annot_file = pd.read_excel(excel_path) #Path of the xlsx file with the annotations
+    print(annot_file.head())
+
 if __name__ == "__main__":
+    """     
     Paths = glob("./test/*.jpg") 
     for path in Paths:
-        get_image_data(path)
+        get_image_data(path) 
+    """
+    get_info_from_xlsx("C:/Bringas/MISTI/Final_Proyect/Make_XML_from_images/Annotation_List.xlsx")
+    generate_XML_gestures()

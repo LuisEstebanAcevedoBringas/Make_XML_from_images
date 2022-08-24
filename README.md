@@ -8,8 +8,6 @@
     <path> path/filename.jpg </path>
     <source>
         <database> IPN_Hand </database>
-        <keyword> keyword </keyword>
-        <date> date </date>
     </source>
     <size>
         <width> width </width>
