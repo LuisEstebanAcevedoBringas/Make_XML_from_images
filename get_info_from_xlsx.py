@@ -1,8 +1,30 @@
-import pandas as pd
+import openpyxl
 
-def process_xlsx(excel_path):
-    annot_file = pd.read_excel(excel_path) #Path of the xlsx file with the annotations
-    print(annot_file.head())
+def process_xlsx(folder_name):
+    theFile = openpyxl.load_workbook("./Annotation_List.xlsx")
+    allSheetNames = theFile.sheetnames
+
+    folder = folder_name
+    metadata = []
+
+    for sheet in allSheetNames:
+        #print("Current sheet name is {}" .format(sheet))
+        currentSheet = theFile[sheet]
+        for row in range(1, currentSheet.max_row + 1):
+            first_cell = "{}{}".format("A",row)
+            if currentSheet[first_cell].value == folder:
+                aux = []
+                for column in "ABCDEF":  # Columns that is going to scan.
+                    cell_name = "{}{}".format(column, row)
+                    #print("cell position {} has value {}".format(cell_name, currentSheet[cell_name].value))
+                    aux.append(currentSheet[cell_name].value)
+                metadata.append(aux)
+            else:
+                continue
+    
+    return metadata
 
 if __name__ == "__main__":
-    process_xlsx("C:/Bringas/MISTI/Final_Proyect/Make_XML_from_images/Annotation_List.xlsx")
+    x = process_xlsx("4CM11_2_R_#37")
+    print (x)
+    print(len(x))
