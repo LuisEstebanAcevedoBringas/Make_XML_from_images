@@ -26,11 +26,12 @@ def get_image_data(path, gesture, gesture_id):
     img_width = img.shape[1]  # Get width.
     # Get the name with extention of the image.
     img_name = os.path.basename(path)
+    print(img_name)
     folder_name = img_path.split("/")[1]  # Get the name of the folder
-    hand = folder_name.split("_")[2]
+    hand = img_name.split("_")[2]
 
     colors_right = [179, 111, 130, 150, 16, 29]
-    colors_left = []
+    colors_left = [""]
 
     #choosen_imgs = ["4CM11_2_R_#37_000069.png", "4CM11_2_R_#37_000169.png", "4CM11_2_R_#37_001500.png", "4CM11_2_R_#37_003685.png", "4CM11_2_R_#37_004021.png"]
 
@@ -156,7 +157,7 @@ def generate_XML(folder_name, img_path, img_name, img_width, img_height, obj_nam
 
 def main():
     array = process_xlsx('4CM11_2_R_#37')
-    path = "./4CM11_2_R_#37/4CM11_2_R_#37_"
+    path = "./segment_photos/4CM11_2_R_#37_"
     for obj in array:
         for time in range(obj[3], obj[4] + 1):
             frame = path + str(time).rjust(6, '0') + '.png'
