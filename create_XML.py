@@ -1,19 +1,21 @@
 # Generate the xml files from images in a folder
 from get_info_from_xlsx import process_xlsx
 import xml.etree.ElementTree as ET
+from pathlib import Path
+import glob
 import cv2
 import os
 
-def check_directory():
+def check_directory(path):
     annotation_dir = ("annotation")
-    check_folder = os.path.isdir("./4CM11_2_R_#37/" + annotation_dir)
+    check_folder = (path + "/annotation/")
 
-    if not check_folder:
-        os.makedirs(annotation_dir)
-        print("created folder : ", annotation_dir)
+    if not os.path.exists(check_folder): #Check is the folder exist
+        os.makedirs(check_folder)
+        print("created folder: ", check_folder)
 
     else:
-        print(annotation_dir, "the folder" + annotation_dir + " already exists.")
+        print("The folder " + check_folder + " already exists.")
 
 
 def get_image_data(path, gesture, gesture_id):
@@ -26,55 +28,53 @@ def get_image_data(path, gesture, gesture_id):
     img_width = img.shape[1]  # Get width.
     # Get the name with extention of the image.
     img_name = os.path.basename(path)
-    print(img_name)
-    folder_name = img_path.split("/")[1]  # Get the name of the folder
+    folder_name = img_path.split("/")[8]  # Get the name of the folder
     hand = img_name.split("_")[2]
 
     colors_right = [179, 111, 130, 150, 16, 29]
-    colors_left = [""]
-
-    #choosen_imgs = ["4CM11_2_R_#37_000069.png", "4CM11_2_R_#37_000169.png", "4CM11_2_R_#37_001500.png", "4CM11_2_R_#37_003685.png", "4CM11_2_R_#37_004021.png"]
+    colors_left = [76, 159, 190, 227, 43, 99]
 
     # Declare all the lists.
     obj_names, bboxes, x_left, y_left, x_right, y_right = ([] for i in range(6))
 
     for y in range(grayscale.shape[0]):  # Columns
-        for x in range(grayscale.shape[1]):  # Rows
+        for x in range(grayscale.shape[1]):  #Rows
             r = grayscale[y, x]
             if r == colors_right[0] or r == colors_right[1] or r == colors_right[2] or r == colors_right[3] or r == colors_right[4] or r == colors_right[5]:
                 x_right.append(x)
                 y_right.append(y)
-            elif(r) == colors_left:  # Look for the light gray color.
+            elif r == colors_left[0] or r == colors_left[1] or r == colors_left[2] or r == colors_left[3] or r == colors_left[4] or r == colors_left[5]:  # Look for the light gray color.
                 x_left.append(x)
                 y_left.append(y)
 
-    try:
-        xmin_left = min(x_left)
-        ymin_left = min(y_left)
-        xmax_left = max(x_left)
-        ymax_left = max(y_left)
-        obj_names.append("left")
-        bboxes.append([xmin_left, ymin_left, xmax_left, ymax_left])
-        cv2.rectangle(img, (xmin_left, ymin_left), (xmax_left, ymax_left), (255, 255, 255), 2)
-    except:
-        print("No left hand")
+    if hand == "L":
+        try:
+            xmin_left = min(x_left)
+            ymin_left = min(y_left)
+            xmax_left = max(x_left)
+            ymax_left = max(y_left)
+            obj_names.append("left")
+            bboxes.append([xmin_left, ymin_left, xmax_left, ymax_left])
+            #cv2.rectangle(img, (xmin_left, ymin_left), (xmax_left, ymax_left), (255, 255, 255), 2)
+        except:
+            print("No left hand")
 
-    try:
-        xmin_right = min(x_right)
-        ymin_right = min(y_right)
-        xmax_right = max(x_right)
-        ymax_right = max(y_right)
-        obj_names.append("right")
-        bboxes.append([xmin_right, ymin_right, xmax_right, ymax_right])
-        cv2.rectangle(img, (xmin_right, ymin_right), (xmax_right, ymax_right), (255, 255, 255), 2)
-    except:
-        print("No right hand")
+    elif hand == "R":
+        try:
+            xmin_right = min(x_right)
+            ymin_right = min(y_right)
+            xmax_right = max(x_right)
+            ymax_right = max(y_right)
+            obj_names.append("right")
+            bboxes.append([xmin_right, ymin_right, xmax_right, ymax_right])
+            #cv2.rectangle(img, (xmin_right, ymin_right), (xmax_right, ymax_right), (255, 255, 255), 2)
+        except:
+            print("No right hand")
 
-    #if img_name in choosen_imgs:
-        # cv2.putText(img, (gesture + " - " + hand), (xmin_right, ymin_right - 18), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 2) #Show the label and the hand over the bounding box.
-        #cv2.imshow(img_name, img)  # Show img with the bounding boxes.
-        #cv2.waitKey(0)
-        #cv2.destroyAllWindows()
+    #cv2.putText(img, (gesture + " - " + hand), (xmin_right, ymin_right - 18), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 2) #Show the label and the hand over the bounding box.
+    #cv2.imshow(img_name, img)  # Show img with the bounding boxes.
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
 
     generate_XML(folder_name, img_path, img_name, img_width, img_height, obj_names, hand, bboxes, gesture, gesture_id)
 
@@ -91,7 +91,7 @@ def generate_XML(folder_name, img_path, img_name, img_width, img_height, obj_nam
     bounding_boxes -> List of arrays with the bounding boxes of the image.
     '''
     file_name = img_name.split('.')[0]
-    save_path = "./" + folder_name + "/annotation/" + file_name + ".xml"
+    save_path = "C:/Users/Luis Bringas/Documents/Databases/IPN_Hand/extension/anotation_files_yolo/" + folder_name + "/annotation/" + file_name + ".xml"
     annotation = ET.Element("annotation")
     add_folder = ET.SubElement(annotation, "folder")
     add_folder.text = "segment"
@@ -156,12 +156,53 @@ def generate_XML(folder_name, img_path, img_name, img_width, img_height, obj_nam
 
 
 def main():
-    array = process_xlsx('4CM11_2_R_#37')
-    path = "./segment_photos/4CM11_2_R_#37_"
-    for obj in array:
-        for time in range(obj[3], obj[4] + 1):
-            frame = path + str(time).rjust(6, '0') + '.png'
-            get_image_data(frame, obj[1], obj[2])
+    
+    folder_with_img_folders = "C:/Users/Luis Bringas/Documents/Databases/IPN_Hand/extension/frames_original_res"
+    sub_folders = [name for name in os.listdir(folder_with_img_folders) if os.path.isdir(os.path.join(folder_with_img_folders, name))]
+    print("Number of folder: ",len(sub_folders))
+    sub_folders_pos = 0
+    
+    for each_folder in sub_folders:
+        print("folder name: ",each_folder)
+        array = process_xlsx(each_folder)
+        path = "C:/Users/Luis Bringas/Documents/Databases/IPN_Hand/extension/anotation_files_yolo/" + each_folder
+        check_directory(path)
+        imgs = (glob.glob(path + "/*.png")) #Get all the images names in the folder
+        #print("Imgs paths: ", imgs)
+        imgs_path = "C:/Users/Luis Bringas/Documents/Databases/IPN_Hand/extension/anotation_files_yolo/" + each_folder + "/" + each_folder + "_"
+        choosen_img_numbers = []
+        img_position = 0
+
+        for i in range(len(imgs)):
+            #print(x[i])
+            name_img = Path(imgs[i]).stem #Get the name of the img
+            num_img = name_img.split("_")[4] #Get the name without the extension
+            num_img = num_img.lstrip("0") #Remove all the zeros on the name
+            choosen_img_numbers.append(num_img)
+        print("Images numers: ",choosen_img_numbers)
+        print("number of images: ", len(choosen_img_numbers))
+
+        for obj in array:
+            for time in range(obj[3], obj[4] + 1):
+                print("time",time)
+                frame = imgs_path + str(time).rjust(6, '0') + '.png'
+                #print("Frame: ", frame)
+                #print("Frame inicial: ", obj[3])
+                #print("Frame final: ", obj[4])
+                name_img = Path(frame).stem #Get the name of the img
+                num_img = name_img.split("_")[4] #Get the name without the extension
+                num_img = num_img.lstrip("0") #Remove all the zeros on the name
+                print("Numero de frame real: ", num_img)
+                print("Numero de frame choosen: ", choosen_img_numbers[img_position])
+                if int(choosen_img_numbers[img_position]) >= int(obj[3]) and int(choosen_img_numbers[img_position]) <= int(obj[4]) and int(choosen_img_numbers[img_position]) == int(num_img):
+                    #print(img_position)
+                    print("Img #",img_position," pass: ", frame)
+                    get_image_data(frame, obj[1], obj[2])
+                    img_position += 1
+                else:
+                    #print("Imagen no seleccionada.")
+                    continue
+        sub_folders_pos += 1
     #get_image_data("./4CM11_2_R_#37/4CM11_2_R_#37_004047.png", "D0X", 1)
 
 if __name__ == "__main__":

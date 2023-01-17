@@ -1,7 +1,25 @@
+Annotation_List_Luiggi.xlsx
+Annotation_list_old.xlsx
+Metadata_Luiggi.xlsx
 convert_txt_2_csv.py
 get_num_pixels.py
+calculate_IoU.py
+/xml_with_errors
+segment_photos
 1CM1_1_R_#218
 4CM11_2_R_#37
 __pycache__
 gray.py
-segment_photos
+warnings.json
+warnings.txt
+
+#Old files
+create_XML.py
+Generate_xml_4_one_folder.py
+
+#Test files
+Delete_3_or_less_consecutive_txt_file_of_D0X.py
+Delete_boxes_far_of_the_previous_frame_box.py
+Add_inside_or_closes_boxes.py
+
+/others
